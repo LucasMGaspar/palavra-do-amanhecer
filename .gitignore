@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# env files (NUNCA suba suas chaves!)
+.env
+.env.local
+.env.*.local
+
+# yarn
+yarn-error.log
+
+# misc
+.DS_Store
