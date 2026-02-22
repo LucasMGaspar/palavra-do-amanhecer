@@ -1,10 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-)
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  )
+}
 
 // ── VALIDA ASSINATURA DO MERCADO PAGO ──────────────────────────────
 function validarAssinatura(req, body) {
@@ -54,6 +56,8 @@ async function buscarAssinatura(preapprovalId) {
 // ── CADASTRA ASSINANTE NO SUPABASE ─────────────────────────────────
 async function cadastrarAssinante({ nome, telefone, email, mpId }) {
   // verifica se já existe
+  const supabase = getSupabase()
+
   const { data: existente } = await supabase
     .from('assinantes')
     .select('id, status')
@@ -159,7 +163,7 @@ export async function POST(req) {
       if (assinatura.status === 'cancelled') {
         const telefone = assinatura.payer?.phone?.number
         if (telefone) {
-          await supabase
+          await getSupabase()
             .from('assinantes')
             .update({ status: 'cancelado' })
             .eq('telefone', telefone.replace(/\D/g, ''))
