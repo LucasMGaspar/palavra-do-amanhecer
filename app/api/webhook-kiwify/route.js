@@ -8,16 +8,26 @@ function getSupabase() {
 }
 
 // ── VALIDA TOKEN DE AUTENTICAÇÃO DA KIWIFY ─────────────────────────
-// A Kiwify envia o token configurado no webhook no header Authorization
-function validarToken(req) {
+// A Kiwify pode enviar o token de diferentes formas
+function validarToken(req, body) {
   const token = process.env.KIWIFY_WEBHOOK_TOKEN
   if (!token) return true // desabilita validação se não configurado
 
+  // Verifica em múltiplos headers e no body
   const authHeader = req.headers.get('authorization') || ''
-  const tokenEnviado = authHeader.replace('Bearer ', '').trim()
+  const tokenHeader = req.headers.get('x-token') || req.headers.get('x-webhook-token') || ''
+  const tokenBody = body?.token || body?.webhook_token || ''
 
-  return tokenEnviado === token
+  const candidatos = [
+    authHeader,
+    authHeader.replace('Bearer ', '').trim(),
+    tokenHeader,
+    tokenBody,
+  ]
+
+  return candidatos.some(c => c === token)
 }
+
 
 // ── CADASTRA / REATIVA ASSINANTE NO SUPABASE ───────────────────────
 async function cadastrarAssinante({ nome, telefone, email, status = 'ativo' }) {
@@ -107,13 +117,13 @@ async function enviarBoasVindas(telefone, nome) {
 // ── HANDLER PRINCIPAL ──────────────────────────────────────────────
 export async function POST(req) {
   try {
-    // valida token da Kiwify
-    if (!validarToken(req)) {
+    const body = await req.json()
+
+    // valida token da Kiwify (passa body para checar token no payload também)
+    if (!validarToken(req, body)) {
       console.warn('Kiwify webhook: token inválido')
       return Response.json({ error: 'Token inválido' }, { status: 401 })
     }
-
-    const body = await req.json()
 
     const { order_status, Customer, Subscription } = body
 
