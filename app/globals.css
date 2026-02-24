@@ -639,6 +639,12 @@ h2 em {
   color: var(--gold);
 }
 
+.price-cents {
+  font-size: 36px;
+  color: var(--gold);
+  vertical-align: baseline;
+}
+
 .price-note {
   font-size: 14px;
   color: var(--cream-dim);

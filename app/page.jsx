@@ -44,7 +44,7 @@ export default function Home() {
             Começar minha jornada
             <span>→</span>
           </a>
-          <p className="hero-price-note">Pagamento único de <strong>R$ 47,00</strong> · Acesso aos 365 dias</p>
+          <p className="hero-price-note">Apenas <strong>R$ 19,90/mês</strong> · Cancele quando quiser</p>
         </div>
 
         <div className="scroll-indicator">
@@ -71,8 +71,8 @@ export default function Home() {
         <div className="how-grid">
           <div className="how-card">
             <div className="how-number">01</div>
-            <h3>Você compra uma vez</h3>
-            <p>Pagamento único de R$47. Sem mensalidade, sem renovação, sem surpresa. Acesso completo aos 365 dias.</p>
+            <h3>Você assina por R$19,90/mês</h3>
+            <p>Sem taxa de adesão, sem fidelidade. Assine e cancele quando quiser, direto pelo WhatsApp.</p>
           </div>
           <div className="how-card">
             <div className="how-number">02</div>
@@ -233,13 +233,13 @@ export default function Home() {
           <h2>Um preço justo para<br />uma jornada de <em>365 dias</em></h2>
 
           <div className="pricing-card">
-            <div className="pricing-badge">Pagamento Único</div>
+            <div className="pricing-badge">Assinatura Mensal</div>
 
-            <div className="price"><sup>R$</sup>47</div>
-            <p className="price-note">Acesso completo · Sem mensalidade · Para sempre</p>
+            <div className="price"><sup>R$</sup>19<span className="price-cents">,90</span></div>
+            <p className="price-note">por mês · menos de R$ 0,70 por dia · cancele quando quiser</p>
 
             <ul className="price-features">
-              <li>365 dias de guia diário pelo WhatsApp</li>
+              <li>Guia diário pelo WhatsApp às 7h</li>
               <li>Contexto histórico de cada passagem</li>
               <li>Ponto de atenção para cada leitura</li>
               <li>Oração diária conectada ao texto</li>
@@ -249,7 +249,7 @@ export default function Home() {
             </ul>
 
             <a href={MP_LINK} className="btn-primary btn-full">
-              Quero começar agora
+              Quero assinar agora
             </a>
 
             <p className="guarantee">🔒 Pagamento seguro via Mercado Pago</p>
@@ -279,7 +279,7 @@ export default function Home() {
         <h2 className="reveal">Comece hoje.<br />Termine em <em>1 ano.</em></h2>
         <p className="reveal">"A jornada de mil milhas começa com um único passo."</p>
         <a href="#comprar" className="btn-primary reveal">
-          Começar minha jornada — R$ 47
+          Começar minha jornada — R$ 19,90/mês
           <span>→</span>
         </a>
       </div>
