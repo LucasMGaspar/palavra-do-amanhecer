@@ -16,16 +16,27 @@ function validarToken(req, body) {
   // Verifica em múltiplos headers e no body
   const authHeader = req.headers.get('authorization') || ''
   const tokenHeader = req.headers.get('x-token') || req.headers.get('x-webhook-token') || ''
+  const tokenQuery = new URL(req.url).searchParams.get('token') || ''
   const tokenBody = body?.token || body?.webhook_token || ''
 
   const candidatos = [
     authHeader,
     authHeader.replace('Bearer ', '').trim(),
     tokenHeader,
+    tokenQuery,
     tokenBody,
   ]
 
-  return candidatos.some(c => c === token)
+  const valido = candidatos.some(c => c === token)
+  if (!valido) {
+    console.warn('Token recebido (headers):', JSON.stringify({
+      authorization: authHeader,
+      'x-token': tokenHeader,
+      query: tokenQuery,
+      body: tokenBody,
+    }))
+  }
+  return valido
 }
 
 
