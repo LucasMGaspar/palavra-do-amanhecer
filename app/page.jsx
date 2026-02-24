@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
+const KIWIFY_LINK = process.env.NEXT_PUBLIC_KIWIFY_LINK || '#'
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(null)
@@ -248,11 +248,11 @@ export default function Home() {
               <li>Barra de progresso personalizada</li>
             </ul>
 
-            <a href={MP_LINK} className="btn-primary btn-full">
+            <a href={KIWIFY_LINK} className="btn-primary btn-full">
               Quero assinar agora
             </a>
 
-            <p className="guarantee">🔒 Pagamento seguro via Mercado Pago</p>
+            <p className="guarantee">🔒 Pagamento seguro via Kiwify</p>
           </div>
         </div>
       </div>
