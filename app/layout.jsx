@@ -1,11 +1,11 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Palavra do Amanhecer – Comece o dia com Deus',
-  description: 'Todo dia às 7h, a Palavra de Deus chega com o seu nome direto no WhatsApp. Versículo, reflexão e oração personalizada.',
+  title: 'Bíblia em 1 Ano – Guia Diário pelo WhatsApp',
+  description: 'Todo dia às 7h, você recebe no WhatsApp o contexto, a passagem do dia e uma oração. Leia a Bíblia inteira em 1 ano com o guia certo.',
   openGraph: {
-    title: 'Palavra do Amanhecer',
-    description: 'Todo dia às 7h, a Palavra de Deus chega com o seu nome direto no WhatsApp.',
+    title: 'Bíblia em 1 Ano',
+    description: 'Todo dia às 7h, você recebe no WhatsApp o contexto, a passagem do dia e uma oração.',
     type: 'website',
   },
 }

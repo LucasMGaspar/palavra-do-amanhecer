@@ -1,404 +1,292 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || 'https://mpago.la/SEU_LINK_AQUI'
+const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
 
 export default function Home() {
-  const canvasRef = useRef(null)
-  const [navScrolled, setNavScrolled] = useState(false)
-  const [showBubble, setShowBubble] = useState(false)
   const [openFaq, setOpenFaq] = useState(null)
 
-  // ── AURORA CANVAS ────────────────────────────────
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    let W, H, t = 0, animId
-
-    const blobs = [
-      { x: .5, y: .9,  r: .55, c: [217,149,60],  spd: .0003 },
-      { x: .3, y: .8,  r: .45, c: [184,83,112],  spd: .0004 },
-      { x: .7, y: .85, r: .4,  c: [59,37,103],   spd: .00025 },
-      { x: .5, y: 1,   r: .6,  c: [30,22,64],    spd: .0002 },
-    ]
-
-    function resize() {
-      W = canvas.width  = window.innerWidth
-      H = canvas.height = window.innerHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
-
-    function draw() {
-      ctx.clearRect(0, 0, W, H)
-      blobs.forEach((b, i) => {
-        const x = (b.x + Math.sin(t * b.spd * 1000 + i) * .12) * W
-        const y = (b.y + Math.cos(t * b.spd * 800  + i) * .06) * H
-        const r = b.r * Math.min(W, H)
-        const g = ctx.createRadialGradient(x, y, 0, x, y, r)
-        g.addColorStop(0, `rgba(${b.c},0.22)`)
-        g.addColorStop(1, `rgba(${b.c},0)`)
-        ctx.beginPath(); ctx.fillStyle = g
-        ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
-      })
-      t++
-      animId = requestAnimationFrame(draw)
-    }
-    draw()
-
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', resize)
-    }
-  }, [])
-
-  // ── PARTÍCULAS ───────────────────────────────────
-  useEffect(() => {
-    const container = document.getElementById('particles')
-    if (!container) return
-    for (let i = 0; i < 55; i++) {
-      const p = document.createElement('div')
-      const size = Math.random() * 2.2 + .4
-      const dur  = 3 + Math.random() * 5
-      const del  = Math.random() * 6
-      p.style.cssText = `
-        position:absolute; border-radius:50%; background:white;
-        width:${size}px; height:${size}px;
-        top:${Math.random()*65}%; left:${Math.random()*100}%;
-        animation: starAnim ${dur}s ${del}s ease-in-out infinite alternate;
-      `
-      container.appendChild(p)
-    }
-  }, [])
-
-  // ── SCROLL REVEAL ────────────────────────────────
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') }),
-      { threshold: .12 }
+      { threshold: 0.1 }
     )
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
     return () => obs.disconnect()
   }, [])
 
-  // ── NAV SCROLL ───────────────────────────────────
-  useEffect(() => {
-    const onScroll = () => setNavScrolled(window.scrollY > 80)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // ── TYPING ANIMATION ─────────────────────────────
-  useEffect(() => {
-    const t1 = setTimeout(() => setShowBubble(true), 2200)
-    const interval = setInterval(() => {
-      setShowBubble(false)
-      setTimeout(() => setShowBubble(true), 2200)
-    }, 8000)
-    return () => { clearTimeout(t1); clearInterval(interval) }
-  }, [])
-
   const faqs = [
-    { q: 'É para evangélicos ou católicos?', a: 'Para todos os cristãos. O conteúdo é baseado na Bíblia e em princípios universais da fé cristã, sem denominação específica. Evangélicos, católicos e qualquer pessoa que queira se aproximar de Deus são igualmente bem-vindos.' },
-    { q: 'Como funcionam os 7 dias grátis?', a: 'Você começa a receber as mensagens no dia seguinte ao cadastro, sem pagar nada. Nos primeiros 7 dias, a assinatura não é cobrada. Se quiser continuar, os R$ 14,90 entram automaticamente. Se não quiser, é só cancelar antes — sem perguntas, sem retenção.' },
-    { q: 'Precisa instalar algum aplicativo?', a: 'Não. Tudo chega direto no WhatsApp que você já usa todos os dias. Sem baixar nada, sem criar conta, sem aprender nenhuma tecnologia nova.' },
-    { q: 'Como funciona o cancelamento?', a: 'Basta mandar uma mensagem pedindo o cancelamento no próprio WhatsApp. Sem formulários complicados, sem ligação, sem aquelas tentativas chatas de te convencer. Resolvemos na hora.' },
-    { q: 'Meu número fica seguro?', a: 'Sim. Seu número é usado exclusivamente para enviar as mensagens do Palavra do Amanhecer. Nunca compartilhamos com terceiros, nunca vendemos dados, nunca enviamos spam.' },
+    { q: 'Precisa ter algum aplicativo especial?', a: 'Não. Tudo chega pelo WhatsApp mesmo — que você já usa. Não precisa baixar nada, criar conta em nada. Só ter WhatsApp.' },
+    { q: 'Qual versão da Bíblia devo usar?', a: 'Qualquer versão que você já tem — física ou em app. Pode ser NVI, ARA, ACF, NVT. O guia cita os livros e capítulos, e você lê na sua versão favorita.' },
+    { q: 'E se eu perder um dia?', a: 'Sem problema. O seu progresso fica salvo. No dia seguinte você recebe o próximo dia normalmente. Pode retomar quando quiser.' },
+    { q: 'Quanto tempo leva por dia?', a: 'Em média 15 minutos. Alguns dias são mais curtos, outros um pouco mais longos — mas nunca mais de 25 minutos para ler os capítulos do dia.' },
+    { q: 'A ordem cronológica começa por onde?', a: 'Começa pelo livro de Jó — o mais antigo da Bíblia — e segue pela ordem histórica dos eventos. É a forma mais imersiva de entender como a história de Deus com a humanidade se desenvolve no tempo real.' },
   ]
 
   return (
     <>
-      <canvas ref={canvasRef} id="aurora-canvas" />
-      <div id="particles" />
+      {/* ── HERO ── */}
+      <div className="hero">
+        <div className="hero-bg"></div>
+        <div className="hero-lines"></div>
 
-      {/* ── NAV ─────────────────────────────────── */}
-      <nav className={`nav ${navScrolled ? 'scrolled' : ''}`}>
-        <div className="nav-logo">🌅<span className="dot"> ✦ </span>Palavra do Amanhecer</div>
-        <a href="#assinar" className="nav-cta">Começar grátis</a>
-      </nav>
-
-      {/* ── HERO ────────────────────────────────── */}
-      <section className="hero">
-        <div className="hero-eyebrow">
-          <span className="line" />
-          Devocional diário no WhatsApp
-          <span className="line" />
+        <div className="badge">
+          <span className="badge-dot"></span>
+          Guia Bíblico pelo WhatsApp
         </div>
 
-        <h1>
-          Todo dia às 7h,<br />
-          <span className="italic">a Palavra de Deus</span><br />
-          chega com o <span className="outline">seu nome</span>
-        </h1>
+        <h1>Leia a <em>Bíblia inteira</em><br />em 1 ano</h1>
+        <p className="hero-subtitle">Todo dia às 7h, você recebe no WhatsApp o contexto, a passagem do dia e uma oração — tudo que precisa para entender a Bíblia de verdade.</p>
 
-        <p className="hero-sub">
-          Uma mensagem personalizada com versículo, reflexão e oração —
-          direto no seu WhatsApp. Para você não começar mais nenhum dia no vazio.
-        </p>
-
-        <div className="hero-actions">
-          <a href="#assinar" className="btn-primary">
-            Quero receber amanhã cedo
-            <span className="btn-arrow">→</span>
+        <div className="hero-cta">
+          <a href="#comprar" className="btn-primary">
+            Começar minha jornada
+            <span>→</span>
           </a>
-          <span className="hero-reassure">
-            <span>7 dias grátis</span> · R$ 14,90/mês · Cancele quando quiser
-          </span>
-        </div>
-
-        <div className="social-proof">
-          <div className="avatars">
-            {['🙏','✨','☀️','🌸'].map((e, i) => (
-              <div key={i} className="avatar">{e}</div>
-            ))}
-          </div>
-          <div className="social-proof-text">
-            <strong>+1.200 pessoas</strong> já começam o dia assim<br />
-            <span style={{ fontSize: '.75rem' }}>Evangélicos, católicos e todos que amam a Deus</span>
-          </div>
+          <p className="hero-price-note">Pagamento único de <strong>R$ 47,00</strong> · Acesso aos 365 dias</p>
         </div>
 
         <div className="scroll-indicator">
-          <span>Descubra mais</span>
-          <div className="scroll-line" />
+          <span>Rolar</span>
+          <div className="scroll-line"></div>
         </div>
-      </section>
+      </div>
 
-      {/* ── DORES ───────────────────────────────── */}
-      <section className="pain-section">
-        <span className="section-tag reveal">Você se reconhece nisso?</span>
-        <h2 className="section-title reveal">Muita gente começa o dia<br /><em>do jeito errado</em></h2>
-        <p className="pain-intro reveal">
-          Você acorda, pega o celular e já cai no <strong>Instagram, notícias ruins, mensagens de trabalho</strong>.
-          O dia começa agitado antes mesmo de você sair da cama.
-          A fé fica pra depois — mas o "depois" nunca chega.
-        </p>
-        <div className="pain-cards">
-          {[
-            { icon: '📱', title: 'O celular é a primeira coisa', desc: 'A rede social entra antes de qualquer oração. O dia começa com ansiedade em vez de paz.' },
-            { icon: '📖', title: 'A Bíblia fica pra depois', desc: 'Você quer ler, quer orar, mas a correria vence. E a culpa fica.' },
-            { icon: '🌀', title: 'Os dias passam no automático', desc: 'Sem propósito, sem direção, sem aquele momento que ancora tudo.' },
-          ].map((c, i) => (
-            <div key={i} className={`pain-card reveal reveal-delay-${i+1}`}>
-              <div className="icon">{c.icon}</div>
-              <p><strong>{c.title}</strong>{c.desc}</p>
-            </div>
-          ))}
-        </div>
-        <p className="pain-bridge reveal">
-          "E se o primeiro pensamento do seu dia fosse<br />uma palavra de Deus com o seu nome?"
-        </p>
-      </section>
+      <div className="divider"></div>
 
-      {/* ── PREVIEW ─────────────────────────────── */}
-      <section className="preview-section">
-        <div className="section-center">
-          <span className="section-tag reveal">Assim chega no seu WhatsApp</span>
-          <h2 className="section-title reveal">Uma mensagem que parece<br /><em>feita só pra você</em></h2>
-        </div>
+      {/* ── PROBLEMA ── */}
+      <div className="problem reveal">
+        <p className="problem-quote">Quero ler a Bíblia inteira, mas nunca sei por onde começar — e sempre desisto no meio do caminho.</p>
+        <p className="problem-text">A maioria dos cristãos já tentou ler a Bíblia do início ao fim e parou em Levítico. Não por falta de fé — mas por falta de contexto, direção e um guia que explique o que está acontecendo.</p>
+      </div>
 
-        <div className="preview-inner">
-          <div className="preview-copy reveal">
-            <h3>Porque <em>é feita</em><br />só pra você</h3>
-            <p>Cada mensagem carrega o seu nome, fala com o momento da sua semana e termina com uma ação prática pra colocar em prática ainda hoje.</p>
-            <p>Não é um versículo jogado no grupo da família. É uma mensagem pensada, no horário certo, esperando por você quando você mais precisa.</p>
-            <ul className="check-list">
-              <li>Seu nome em cada mensagem — não é disparo em massa</li>
-              <li>Conteúdo temático semanal com continuidade</li>
-              <li>Tom interdenominacional — evangélicos e católicos</li>
-              <li>Oração personalizada com seu pedido específico</li>
-            </ul>
+      <div className="divider"></div>
+
+      {/* ── COMO FUNCIONA ── */}
+      <section className="reveal">
+        <div className="section-label">Como funciona</div>
+        <h2>Simples como receber<br />uma <em>mensagem</em></h2>
+
+        <div className="how-grid">
+          <div className="how-card">
+            <div className="how-number">01</div>
+            <h3>Você compra uma vez</h3>
+            <p>Pagamento único de R$47. Sem mensalidade, sem renovação, sem surpresa. Acesso completo aos 365 dias.</p>
           </div>
+          <div className="how-card">
+            <div className="how-number">02</div>
+            <h3>Todo dia às 7h chega uma mensagem</h3>
+            <p>No WhatsApp mesmo. Com contexto histórico, os capítulos do dia, um ponto de atenção e uma oração curta.</p>
+          </div>
+          <div className="how-card">
+            <div className="how-number">03</div>
+            <h3>Você lê os capítulos do dia</h3>
+            <p>Em média 15 minutos por dia. Com o guia na mão, você vai entender o que está lendo — e querer continuar.</p>
+          </div>
+          <div className="how-card">
+            <div className="how-number">04</div>
+            <h3>Em 1 ano, você terminou</h3>
+            <p>1.189 capítulos. 39 livros do AT, 27 do NT. Em ordem cronológica histórica — a forma mais imersiva de ler.</p>
+          </div>
+        </div>
+      </section>
 
-          <div className="phone-scene reveal reveal-delay-2">
-            <div className="phone-glow-bg" />
-            <div className="phone">
-              <div className="phone-notch" />
-              <div className="phone-header">
-                <div className="p-avatar">🌅</div>
-                <div>
-                  <div className="p-name">Palavra do Amanhecer</div>
-                  <div className="p-status">online agora</div>
+      <div className="divider"></div>
+
+      {/* ── PREVIEW DA MENSAGEM ── */}
+      <div className="preview-section">
+        <div className="preview-inner">
+          <div className="preview-phone reveal">
+            <div className="phone-frame">
+              <div className="phone-screen">
+                <div className="phone-header">
+                  <div className="phone-avatar">📖</div>
+                  <div>
+                    <div className="phone-contact">Bíblia em 1 Ano</div>
+                    <div className="phone-status">online agora</div>
+                  </div>
+                </div>
+                <div className="phone-messages">
+                  <div className="message-bubble">
+                    <strong>📅 Dia 1 de 365 — Jó</strong>
+                    <div className="msg-sep"></div>
+                    <strong>🌍 Contexto de hoje:</strong><br />
+                    Jó é o livro mais antigo da Bíblia. Tudo que poderia dar errado, deu — em um único dia. Mas Jó não entendeu. Adorou assim mesmo.
+                    <div className="msg-sep"></div>
+                    <strong>📖 Leia agora:</strong> Jó 1–3<br />
+                    ⏱ ~15 minutos
+                    <div className="msg-sep"></div>
+                    <strong>🔍 Atenção em:</strong><br />
+                    Satanás não age sem permissão. Há um limite no caos.
+                    <div className="msg-sep"></div>
+                    <em>🙏 Senhor, que eu adore mesmo sem entender. Amém.</em>
+                    <div className="msg-sep"></div>
+                    📊 ░░░░░░░░░░ 0%<br />
+                    <em>Bom estudo, João! 📚</em>
+                  </div>
                 </div>
               </div>
-              {!showBubble && (
-                <div className="typing">
-                  <span /><span /><span />
-                </div>
-              )}
-              {showBubble && (
-                <div className="bubble">
-                  <div>🌅 <span className="b-bold">Bom dia, Maria!</span> ☀️</div>
-                  <div className="b-divider" />
-                  <div>📖 <span className="b-bold">Versículo de hoje:</span></div>
-                  <div className="b-verse">"Não temas, porque eu sou contigo." — Isaías 41:10</div>
-                  <div className="b-divider" />
-                  <div>💭 <span className="b-bold">Reflexão:</span></div>
-                  <div style={{ margin: '.3rem 0', color: '#ccc' }}>Você não está sozinha hoje. Em cada passo que der, Ele vai à frente.</div>
-                  <div className="b-divider" />
-                  <div className="b-task">✅ Dê hoje o primeiro passo naquilo que o medo tem te impedido.</div>
-                  <div className="b-divider" />
-                  <div className="b-muted">🙏 Que seu dia seja abençoado, Maria. Até amanhã!</div>
-                </div>
-              )}
-              <div className="b-time">07:00 ✓✓</div>
             </div>
+          </div>
+
+          <div className="reveal">
+            <div className="section-label">Exemplo real</div>
+            <h2>Assim chega<br />todo <em>dia</em></h2>
+            <p style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--cream-dim)', marginBottom: '32px' }}>
+              Cada mensagem tem tudo que você precisa para a leitura do dia. Contexto histórico para entender o que está lendo, a passagem exata, um ponto de atenção e uma oração relacionada ao texto.
+            </p>
+
+            <div className="features">
+              <div className="feature">
+                <div className="feature-icon">🌍</div>
+                <div>
+                  <h4>Contexto histórico</h4>
+                  <p>O que estava acontecendo no mundo quando esse texto foi escrito.</p>
+                </div>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">📖</div>
+                <div>
+                  <h4>Passagem do dia</h4>
+                  <p>Exatamente quais capítulos ler e quanto tempo vai levar.</p>
+                </div>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">🔍</div>
+                <div>
+                  <h4>Ponto de atenção</h4>
+                  <p>O que observar durante a leitura para não perder os detalhes.</p>
+                </div>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">🙏</div>
+                <div>
+                  <h4>Oração do dia</h4>
+                  <p>Uma oração curta conectada ao texto que você acabou de ler.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CONQUISTAS ── */}
+      <section className="reveal">
+        <div className="section-label">Progresso</div>
+        <h2>Cada livro concluído<br />é uma <em>conquista</em></h2>
+        <p style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--cream-dim)', maxWidth: '540px', marginBottom: '48px' }}>
+          Ao terminar cada livro da Bíblia, você recebe uma mensagem especial de parabéns com sua barra de progresso. Pequenas vitórias que mantêm você na jornada.
+        </p>
+
+        <div className="achievement-card">
+          <div className="achievement-bubble">
+            <strong>🎉 Parabéns! Você concluiu GÊNESIS!</strong><br /><br />
+            Do "no princípio" até os ossos de José sendo carregados com fé para a terra prometida. A fundação de toda a narrativa bíblica.<br /><br />
+            📊 ░░░░░░░░░░ 8% concluído<br /><br />
+            <em>28 dias consecutivos. Você está construindo um hábito poderoso! 💪</em>
           </div>
         </div>
       </section>
 
-      {/* ── COMO FUNCIONA ───────────────────────── */}
-      <section className="how-section">
-        <span className="section-tag reveal">Simples assim</span>
-        <h2 className="section-title reveal">Em 3 passos você<br /><em>já recebe amanhã</em></h2>
-        <div className="timeline">
-          {[
-            { n: '1', title: 'Clique e se cadastre', desc: 'Nome e número do WhatsApp. Menos de 2 minutos.' },
-            { n: '2', title: 'Confirme no Mercado Pago', desc: 'Pagamento 100% seguro. Começa com 7 dias grátis.' },
-            { n: '3', title: 'Receba amanhã às 7h', desc: 'Sua primeira mensagem já chega no dia seguinte.' },
-          ].map((s, i) => (
-            <div key={i} className={`tl-step reveal reveal-delay-${i+1}`}>
-              <div className="tl-num">{s.n}</div>
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
+      <div className="divider"></div>
+
+      {/* ── DEPOIMENTOS ── */}
+      <div className="testimonials-section">
+        <div className="testimonials-inner reveal">
+          <div className="section-label">Depoimentos</div>
+          <h2>O que dizem quem<br />já <em>começou</em></h2>
+
+          <div className="testimonials-grid">
+            <div className="testimonial">
+              <div className="testimonial-stars">★★★★★</div>
+              <p>"Tentei ler a Bíblia 3 vezes na vida e sempre parei. Com o contexto histórico do guia, pela primeira vez estou entendendo o que estou lendo — e não consigo parar."</p>
+              <div className="testimonial-author">
+                <strong>Ana Paula M.</strong>
+                professora, 34 anos
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── GRADE DA SEMANA ─────────────────────── */}
-      <section className="week-section">
-        <div className="section-center">
-          <span className="section-tag reveal">O que você recebe</span>
-          <h2 className="section-title reveal">Uma semana completa<br /><em>de presença</em></h2>
-        </div>
-        <div className="week-grid">
-          {[
-            { e:'📖', n:'Seg', d:'Versículo + reflexão + ação', s:false },
-            { e:'🔥', n:'Ter', d:'Versículo + reflexão + ação', s:false },
-            { e:'✨', n:'Qua', d:'Versículo + reflexão + ação', s:false },
-            { e:'💪', n:'Qui', d:'Versículo + reflexão + ação', s:false },
-            { e:'🌟', n:'Sex', d:'Versículo + reflexão + ação', s:false },
-            { e:'🌸', n:'Sáb', d:'Resumo + oração', s:true },
-            { e:'☀️', n:'Dom', d:'Mensagem leve', s:true },
-          ].map((d, i) => (
-            <div key={i} className={`day-card reveal reveal-delay-${Math.min(i+1,4)} ${d.s ? 'special' : ''}`}>
-              <div className="day-emoji">{d.e}</div>
-              <div className="day-name">{d.n}</div>
-              <div className="day-desc">{d.d}</div>
+            <div className="testimonial">
+              <div className="testimonial-stars">★★★★★</div>
+              <p>"A mensagem chega e eu já sei exatamente o que fazer. 15 minutos por dia. É o único hábito espiritual que consegui manter por mais de 30 dias consecutivos."</p>
+              <div className="testimonial-author">
+                <strong>Carlos R.</strong>
+                engenheiro, 41 anos
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── QUOTE ───────────────────────────────── */}
-      <section className="quote-section">
-        <blockquote className="reveal">
-          "Não deixe o dia começar<br />antes de você ter dado a<br /><em>primeira palavra para Deus</em>"
-        </blockquote>
-        <cite className="reveal">Palavra do Amanhecer</cite>
-      </section>
-
-      {/* ── PREÇO ───────────────────────────────── */}
-      <section className="price-section" id="assinar">
-        <span className="section-tag reveal">Investimento</span>
-        <h2 className="section-title reveal">Menos que um café.<br /><em>Vale muito mais.</em></h2>
-
-        <div className="price-card reveal">
-          <span className="price-tag">✦ Mais escolhido</span>
-          <div className="price-name">Palavra do Amanhecer</div>
-          <div className="price-display">
-            <span className="p-cur">R$</span>
-            <span className="p-val">14</span>
-            <span className="p-dec">,90</span>
+            <div className="testimonial">
+              <div className="testimonial-stars">★★★★★</div>
+              <p>"O que me impressionou foi a profundidade. Não é só 'leia isso aqui.' É contexto, história, conexão com o presente. Parece que a Bíblia ficou viva."</p>
+              <div className="testimonial-author">
+                <strong>Fernanda L.</strong>
+                empresária, 28 anos
+              </div>
+            </div>
           </div>
-          <div className="price-equiv">por mês · menos de R$ 0,50 por dia</div>
-          <div className="price-divider" />
-          <ul className="price-features">
-            {[
-              'Devocional diário de segunda a sexta',
-              'Resumo semanal + oração no sábado',
-              'Mensagem leve todo domingo',
-              'Oração personalizada quinzenal',
-              'Mensagem especial no seu aniversário',
-              '7 dias grátis para experimentar',
-              'Cancele quando quiser, sem burocracia',
-            ].map((f, i) => (
-              <li key={i}><span className="check">✓</span>{f}</li>
-            ))}
-          </ul>
-          <a href={MP_LINK} className="btn-primary btn-full">
-            Começar meus 7 dias grátis
-            <span className="btn-arrow">→</span>
-          </a>
-          <p className="price-lock">
-            🔒 Pagamento seguro pelo Mercado Pago.<br />
-            Sem fidelidade. Cancele a qualquer momento.<br />
-            <a href="/privacidade">Política de privacidade</a> · <a href="/termos">Termos de uso</a>
-          </p>
         </div>
-      </section>
+      </div>
 
-      {/* ── DEPOIMENTOS ─────────────────────────── */}
-      <section className="testimonials-section">
-        <div className="section-center">
-          <span className="section-tag reveal">Quem já acorda diferente</span>
-          <h2 className="section-title reveal">Eles também<br /><em>duvidaram antes</em></h2>
-        </div>
-        <div className="testimonials-grid">
-          {[
-            { stars:'★★★★★', text:'"Honestamente, não achei que ia fazer diferença. Mas na terceira mensagem eu estava chorando antes de sair pro trabalho. Parecia que Deus estava me respondendo."', name:'Ana Paula, 34 anos', loc:'São Paulo, SP · Evangélica' },
-            { stars:'★★★★★', text:'"Sou católico e fiquei desconfiado no começo. Mas não tem nada sectário — é só a Palavra de Deus, bem escrita, no momento certo. Me sinto acolhido."', name:'Roberto, 47 anos', loc:'Belo Horizonte, MG · Católico' },
-            { stars:'★★★★★', text:'"A oração com o meu nome e o meu pedido... nunca tinha recebido algo assim. Parece que tem alguém de verdade intercedendo por mim todo dia."', name:'Fernanda, 29 anos', loc:'Rio de Janeiro, RJ · Evangélica' },
-          ].map((t, i) => (
-            <div key={i} className={`t-card reveal reveal-delay-${i+1}`}>
-              <div className="t-stars">{t.stars}</div>
-              <p className="t-text">{t.text}</p>
-              <div className="t-author"><strong>{t.name}</strong>{t.loc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── PRICING ── */}
+      <div className="pricing-section" id="comprar">
+        <div className="pricing-inner reveal">
+          <div className="section-label" style={{ justifyContent: 'center' }}>Investimento</div>
+          <h2>Um preço justo para<br />uma jornada de <em>365 dias</em></h2>
 
-      {/* ── FAQ ─────────────────────────────────── */}
-      <section className="faq-section">
-        <div className="section-center" style={{ marginBottom: '1rem' }}>
-          <span className="section-tag reveal">Antes de decidir</span>
-          <h2 className="section-title reveal">Perguntas <em>frequentes</em></h2>
+          <div className="pricing-card">
+            <div className="pricing-badge">Pagamento Único</div>
+
+            <div className="price"><sup>R$</sup>47</div>
+            <p className="price-note">Acesso completo · Sem mensalidade · Para sempre</p>
+
+            <ul className="price-features">
+              <li>365 dias de guia diário pelo WhatsApp</li>
+              <li>Contexto histórico de cada passagem</li>
+              <li>Ponto de atenção para cada leitura</li>
+              <li>Oração diária conectada ao texto</li>
+              <li>Resumo semanal todo domingo</li>
+              <li>Mensagens de conquista ao terminar cada livro</li>
+              <li>Barra de progresso personalizada</li>
+            </ul>
+
+            <a href={MP_LINK} className="btn-primary btn-full">
+              Quero começar agora
+            </a>
+
+            <p className="guarantee">🔒 Pagamento seguro via Mercado Pago</p>
+          </div>
         </div>
+      </div>
+
+      {/* ── FAQ ── */}
+      <div className="faq-section reveal">
+        <div className="section-label">Dúvidas</div>
+        <h2>Perguntas <em>frequentes</em></h2>
+
         {faqs.map((f, i) => (
-          <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`}>
-            <button className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-              {f.q} <span className="faq-icon">+</span>
-            </button>
-            <div className="faq-a">{f.a}</div>
+          <div key={i} className="faq-item">
+            <div className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+              {f.q} <span>{openFaq === i ? '−' : '+'}</span>
+            </div>
+            {openFaq === i && (
+              <div className="faq-answer">{f.a}</div>
+            )}
           </div>
         ))}
-      </section>
+      </div>
 
-      {/* ── CTA FINAL ───────────────────────────── */}
-      <section className="final-cta">
-        <h2 className="reveal">
-          Amanhã você vai acordar<br />
-          e o <em>primeiro pensamento</em><br />
-          vai ser de Deus
-        </h2>
-        <p className="reveal">
-          Uma palavra com o seu nome. Um versículo escolhido pra esse momento da sua vida.
-          Uma oração por você. Todo dia. Sem falhar.
-        </p>
-        <a href="#assinar" className="btn-primary reveal">
-          Quero começar amanhã cedo
-          <span className="btn-arrow">→</span>
+      {/* ── FOOTER CTA ── */}
+      <div className="footer-cta">
+        <h2 className="reveal">Comece hoje.<br />Termine em <em>1 ano.</em></h2>
+        <p className="reveal">"A jornada de mil milhas começa com um único passo."</p>
+        <a href="#comprar" className="btn-primary reveal">
+          Começar minha jornada — R$ 47
+          <span>→</span>
         </a>
-        <p className="final-note reveal">7 dias grátis · R$ 14,90/mês depois · Cancele quando quiser</p>
-      </section>
+      </div>
 
-      {/* ── FOOTER ──────────────────────────────── */}
+      {/* ── FOOTER ── */}
       <footer>
-        <p>© 2025 Palavra do Amanhecer · Todos os direitos reservados</p>
-        <p><a href="/privacidade">Privacidade</a> · <a href="/termos">Termos</a> · <a href="mailto:oi@palavradoamanhecer.com.br">Contato</a></p>
+        <p>© 2025 Bíblia em 1 Ano · Todos os direitos reservados</p>
       </footer>
     </>
   )
